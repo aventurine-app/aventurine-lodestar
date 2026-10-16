@@ -1,4 +1,4 @@
-# Electron shell for aventurine
+# Electron shell for Lodestar
 
 The desktop app. Electron with an **in-process Node backend** (`backend/`):
 the renderer talks to it over a single IPC channel — there is no HTTP server,
@@ -46,11 +46,11 @@ OS-appropriate userData directory:
 
 | OS      | Path                                                  |
 | ------- | ----------------------------------------------------- |
-| Linux   | `~/.config/Aventurine/data/`                 |
-| macOS   | `~/Library/Application Support/Aventurine/data/` |
-| Windows | `%APPDATA%\Aventurine\data\`                 |
+| Linux   | `~/.config/Lodestar/data/`                 |
+| macOS   | `~/Library/Application Support/Lodestar/data/` |
+| Windows | `%APPDATA%\Lodestar\data\`                 |
 
-(Packaged builds; `npm start` uses a separate `aventurine-dev` profile — see
+(Packaged builds; `npm start` uses a separate `lodestar-dev` profile — see
 main.js. Profiles from the app's Oliv era are migrated on first launch.)
 First launch creates this directory and seeds a fresh DB.
 `AVENTURINE_DB_PATH` overrides the DB path and suppresses pointer writes

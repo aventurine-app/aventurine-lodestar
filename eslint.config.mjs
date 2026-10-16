@@ -87,6 +87,8 @@ const appGlobals = {
   DonutChart: 'readonly',
   // widgets/cellselect.js
   enableCellSelection: 'readonly',
+  // shell/theme-init.js (the stored surface and graph palette; loaded in <head>)
+  appTheme: 'readonly',
   // widgets/bubblefield.js (the Budgets page's circles)
   BubbleField: 'readonly',
   // widgets/monthstepper.js

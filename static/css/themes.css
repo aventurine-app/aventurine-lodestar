@@ -8,7 +8,8 @@
    (The light theme is the :root baseline in style.css; this block overrides it
    when data-theme="dark" is set on <html>.) */
 html[data-theme="dark"],
-.settings-theme-swatch[data-theme="dark"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="dark"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="warm-dark"],
 [data-ds-theme="dark"] {   /* style-free scoping hook: render a subtree in dark
                               regardless of the page theme (design-system previews) */
 
@@ -250,6 +251,202 @@ html[data-theme="colorful"] .nav li a.active {
     background: var(--accent-primary);
     color: var(--color-base-050);
     /* TEMP: disabled. Restore: box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16); */
+}
+
+
+
+/* ─── Warm Light and Warm Dark ───────────────────────────────────────────────
+   The same two themes on a warmer grey ramp (a faint sand/umber cast in place of
+   the neutral green-grey). They paint as data-theme "" / "dark" plus data-warm
+   (shell/theme-init.js), so every rule above and in the page sheets keeps
+   applying and this block only swaps the base ramp. Every surface, border and
+   text token reads that ramp, so nothing else is restated. The accent ramp is
+   left alone: warm changes the paper, not the brand colour. The rungs keep the
+   neutral ramp's lightness steps, so the contrast the themes were tuned to
+   carries over. The swatches name the theme on the swatch itself, as the other
+   surface swatches do. */
+html[data-warm],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="warm-light"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="warm-dark"] {
+    --color-base-050: #f7f3ec;
+    --color-base-100: #ece6dc;
+    --color-base-200: #d6cec1;
+    --color-base-300: #bdb4a5;
+    --color-base-400: #a39a8b;
+    --color-base-500: #877e70;
+    --color-base-600: #6c6458;
+    --color-base-700: #524b41;
+    --color-base-800: #38332c;
+    --color-base-900: #1d1a16;
+    --color-base-950: #0e0c0a;
+}
+
+
+
+/* ─── Tinted surfaces ────────────────────────────────────────────────────────
+   Light with one hue carried through the greys and the accent: red, orange,
+   blue, green, purple, pink. They paint as data-theme "" plus data-tint
+   (shell/theme-init.js), so Light's rules apply untouched and each block below
+   only swaps the two ramps every token reads. The greys keep the neutral ramp's
+   lightness steps at a low saturation. The accent ramp is the same walk at full
+   saturation, with the 600 rung (the resting accent) lowered per hue until it
+   clears 4.7:1 against both its own 050 (button text) and the page. Orange and
+   green need the lowest 600 for that. The swatches name the theme on the
+   swatch itself, as the other surface swatches do. */
+html[data-tint="red"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="tint-red"] {
+    --color-base-050: #f4f1f1;
+    --color-base-100: #e9e2e2;
+    --color-base-200: #d4c9c9;
+    --color-base-300: #beacac;
+    --color-base-400: #a99292;
+    --color-base-500: #917373;
+    --color-base-600: #755c5c;
+    --color-base-700: #594646;
+    --color-base-800: #3c2f2f;
+    --color-base-900: #1d1616;
+    --color-base-950: #0e0b0b;
+    --color-accent-050: #fbecec;
+    --color-accent-100: #f5d6d6;
+    --color-accent-200: #eba8a8;
+    --color-accent-300: #e17f7f;
+    --color-accent-400: #d75454;
+    --color-accent-500: #ca2f2f;
+    --color-accent-600: #992424;
+    --color-accent-700: #741b1b;
+    --color-accent-800: #531313;
+    --color-accent-900: #290a0a;
+    --color-accent-950: #140505;
+}
+
+html[data-tint="orange"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="tint-orange"] {
+    --color-base-050: #f4f2f1;
+    --color-base-100: #e9e5e2;
+    --color-base-200: #d4cdc9;
+    --color-base-300: #beb3ac;
+    --color-base-400: #a99b92;
+    --color-base-500: #917f73;
+    --color-base-600: #6f6158;
+    --color-base-700: #594d46;
+    --color-base-800: #3c342f;
+    --color-base-900: #1d1916;
+    --color-base-950: #0e0c0b;
+    --color-accent-050: #fcf2eb;
+    --color-accent-100: #f9e2d2;
+    --color-accent-200: #f3c1a0;
+    --color-accent-300: #eea472;
+    --color-accent-400: #e88543;
+    --color-accent-500: #de691b;
+    --color-accent-600: #9d4a13;
+    --color-accent-700: #78390f;
+    --color-accent-800: #5b2b0b;
+    --color-accent-900: #2d1606;
+    --color-accent-950: #160b03;
+}
+
+html[data-tint="blue"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="tint-blue"] {
+    --color-base-050: #f1f2f4;
+    --color-base-100: #e2e5e9;
+    --color-base-200: #c9ced4;
+    --color-base-300: #acb4be;
+    --color-base-400: #929ca9;
+    --color-base-500: #738091;
+    --color-base-600: #5a6472;
+    --color-base-700: #464d59;
+    --color-base-800: #2f343c;
+    --color-base-900: #16191d;
+    --color-base-950: #0b0c0e;
+    --color-accent-050: #ecf2fb;
+    --color-accent-100: #d6e3f5;
+    --color-accent-200: #a8c4eb;
+    --color-accent-300: #7fa8e1;
+    --color-accent-400: #548bd7;
+    --color-accent-500: #2f70ca;
+    --color-accent-600: #245599;
+    --color-accent-700: #1b4074;
+    --color-accent-800: #132e53;
+    --color-accent-900: #0a1729;
+    --color-accent-950: #050b14;
+}
+
+html[data-tint="green"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="tint-green"] {
+    --color-base-050: #f1f4f2;
+    --color-base-100: #e2e9e4;
+    --color-base-200: #c9d4cd;
+    --color-base-300: #acbeb2;
+    --color-base-400: #92a99a;
+    --color-base-500: #73917d;
+    --color-base-600: #536a5b;
+    --color-base-700: #415347;
+    --color-base-800: #2f3c33;
+    --color-base-900: #161d18;
+    --color-base-950: #0b0e0c;
+    --color-accent-050: #eef9f2;
+    --color-accent-100: #d9f2e1;
+    --color-accent-200: #afe4c1;
+    --color-accent-300: #88d7a3;
+    --color-accent-400: #61ca84;
+    --color-accent-500: #3ebb68;
+    --color-accent-600: #26713f;
+    --color-accent-700: #1b522e;
+    --color-accent-800: #194d2b;
+    --color-accent-900: #0d2615;
+    --color-accent-950: #06130a;
+}
+
+html[data-tint="purple"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="tint-purple"] {
+    --color-base-050: #f2f1f4;
+    --color-base-100: #e5e2e9;
+    --color-base-200: #cec9d4;
+    --color-base-300: #b4acbe;
+    --color-base-400: #9d92a9;
+    --color-base-500: #817391;
+    --color-base-600: #685c75;
+    --color-base-700: #4e4659;
+    --color-base-800: #352f3c;
+    --color-base-900: #19161d;
+    --color-base-950: #0c0b0e;
+    --color-accent-050: #f3eef9;
+    --color-accent-100: #e5d9f2;
+    --color-accent-200: #c8afe4;
+    --color-accent-300: #ad88d7;
+    --color-accent-400: #9261ca;
+    --color-accent-500: #793ebb;
+    --color-accent-600: #5b2f8e;
+    --color-accent-700: #45246b;
+    --color-accent-800: #31194d;
+    --color-accent-900: #190d26;
+    --color-accent-950: #0c0613;
+}
+
+html[data-tint="pink"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="tint-pink"] {
+    --color-base-050: #f4f1f2;
+    --color-base-100: #e9e2e5;
+    --color-base-200: #d4c9ce;
+    --color-base-300: #beacb4;
+    --color-base-400: #a9929d;
+    --color-base-500: #917381;
+    --color-base-600: #755c68;
+    --color-base-700: #59464e;
+    --color-base-800: #3c2f35;
+    --color-base-900: #1d1619;
+    --color-base-950: #0e0b0c;
+    --color-accent-050: #faedf3;
+    --color-accent-100: #f5d6e4;
+    --color-accent-200: #eaa9c7;
+    --color-accent-300: #df81ad;
+    --color-accent-400: #d55691;
+    --color-accent-500: #c83278;
+    --color-accent-600: #97265b;
+    --color-accent-700: #721d45;
+    --color-accent-800: #521431;
+    --color-accent-900: #290a18;
+    --color-accent-950: #14050c;
 }
 
 
@@ -586,4 +783,206 @@ html[data-theme="dark"] .settings-graph-swatch[data-graph-theme="opal"] {
     --chart-balance-6: #95b2d1;
     --chart-balance-7: #a4c7e0;   /* donut: retirement */
     --chart-balance-8: #b7def1;
+}
+
+
+/* ─── Lapis Lazuli graphs ─────────────────────────────────────────────────────
+   Two hues, royal blue and gold, the stone and its pyrite flecks. Unlike Gemstone
+   and Opal this is not eight different hues: the eight slots alternate between
+   the two families and are told apart by lightness, so a chart reads blue and
+   yellow however many series it draws.
+
+     1 Royal blue   2 Gold        3 Navy      4 Cornflower
+     5 Amber        6 Ochre       7 Steel     8 Olive gold
+
+   Fixed hex, not accent mixes, for the same reason Gemstone is. Picking Lapis
+   Lazuli does not follow the UI accent. The order is load-bearing: slots 1-4 are
+   drawn together in one frame (the Dashboard's Balances pie takes --chart-1..4),
+   so they alternate blue, gold, navy, cornflower, which keeps every pair in that
+   frame at least 15 apart in OKLab, and adjacent pairs 18 or more.
+
+   Money arriving is a royal-blue ramp, money leaving keeps the app-wide gold ramp
+   (style.css), so it is not restated here, and balances walk a slate blue-grey.
+   Each ramp runs the same lightness steps as the Aventurine ramp it replaces, so
+   the adjacent-pair spacing checked there carries over. The named trio
+   (--chart-income, --chart-expense, --chart-transfer), --chart-net, --chart-debt
+   and --chart-networth are aliases of those ramps and follow with nothing to
+   restate. The light set's amber and cornflower sit at 2.7-3.4:1 against the
+   page, the same floor the Aventurine and Gemstone sets accept for their palest
+   steps. Dark is a SELECTED set re-picked against the dark surface, not a
+   lightened copy. */
+html[data-graph-theme="lapis"],
+.settings-graph-swatch[data-graph-theme="lapis"] {
+    --chart-1: #2b50c0;   /* royal blue */
+    --chart-2: #ab8100;   /* gold */
+    --chart-3: #1a2f73;   /* navy */
+    --chart-4: #5a80dd;   /* cornflower */
+    --chart-5: #bd8300;   /* amber */
+    --chart-6: #7d5f00;   /* ochre */
+    --chart-7: #4d6fa3;   /* steel */
+    --chart-8: #8a7d00;   /* olive gold */
+
+    --chart-inflow-1: #033fb2;
+    --chart-inflow-2: #2056c0;
+    --chart-inflow-3: #396cce;
+    --chart-inflow-4: #5181dc;
+    --chart-inflow-5: #6995e9;
+    --chart-inflow-6: #81aaf7;
+
+    --chart-balance-1: #394863;   /* donut: cash */
+    --chart-balance-2: #485873;
+    --chart-balance-3: #596883;
+    --chart-balance-4: #697893;   /* donut: investments */
+    --chart-balance-5: #7a89a4;
+    --chart-balance-6: #8c9bb5;
+    --chart-balance-7: #9eacc7;   /* donut: retirement */
+    --chart-balance-8: #b0bed8;
+
+    --cat-1: var(--chart-1);
+    --cat-2: var(--chart-2);
+    --cat-3: var(--chart-3);
+    --cat-4: var(--chart-4);
+    --cat-5: var(--chart-5);
+    --cat-6: var(--chart-6);
+    --cat-7: var(--chart-7);
+    --cat-8: var(--chart-8);
+}
+
+/* The same hues re-picked for the dark surface. Two attributes deep, so it
+   outweighs the light block above whichever order they land in. */
+html[data-graph-theme="lapis"][data-theme="dark"],
+html[data-theme="dark"] .settings-graph-swatch[data-graph-theme="lapis"] {
+    --chart-1: #5b82e6;   /* royal blue */
+    --chart-2: #d4a514;   /* gold */
+    --chart-3: #3d5fc4;   /* navy */
+    --chart-4: #8aaaf0;   /* cornflower */
+    --chart-5: #f0c23a;   /* amber */
+    --chart-6: #a98318;   /* ochre */
+    --chart-7: #7f9fd0;   /* steel */
+    --chart-8: #c2b030;   /* olive gold */
+
+    --chart-inflow-1: #1e59cd;
+    --chart-inflow-2: #386ed8;
+    --chart-inflow-3: #5183e2;
+    --chart-inflow-4: #6997ec;
+    --chart-inflow-5: #82aaf5;
+    --chart-inflow-6: #9bbeff;
+
+    --chart-balance-1: #596986;   /* donut: cash */
+    --chart-balance-2: #687793;
+    --chart-balance-3: #7786a1;
+    --chart-balance-4: #8695ae;   /* donut: investments */
+    --chart-balance-5: #96a3bc;
+    --chart-balance-6: #a6b3c9;
+    --chart-balance-7: #b6c2d7;   /* donut: retirement */
+    --chart-balance-8: #c6d2e5;
+
+    --cat-1: var(--chart-1);
+    --cat-2: var(--chart-2);
+    --cat-3: var(--chart-3);
+    --cat-4: var(--chart-4);
+    --cat-5: var(--chart-5);
+    --cat-6: var(--chart-6);
+    --cat-7: var(--chart-7);
+    --cat-8: var(--chart-8);
+}
+
+
+/* ─── Labradorite graphs ──────────────────────────────────────────────────────
+   Five colours, the stone's grey body and its flashes: blue-grey, green-grey,
+   bright green, bright blue and a desaturated yellow. The eight slots are those
+   five plus a deeper blue, a pale blue and a khaki, so a chart stays inside the
+   family however many series it draws.
+
+     1 Bright blue   2 Yellow       3 Bright green   4 Blue-grey
+     5 Navy          6 Green-grey   7 Khaki          8 Sky
+
+   Fixed hex, not accent mixes, for the same reason Gemstone is. Picking
+   Labradorite does not follow the UI accent. The order is load-bearing: slots 1-4
+   are drawn together in one frame (the Dashboard's Balances pie takes
+   --chart-1..4), so they alternate the saturated colours with the grey, which
+   keeps every pair in that frame at least 12 apart in OKLab. The two greys are
+   kept apart in the order, since they are the closest pair in the set.
+
+   Money arriving is a bright-green ramp, money leaving is a desaturated yellow
+   ramp, and balances walk a blue-grey. Each ramp runs the same lightness steps as
+   the Aventurine ramp it replaces (style.css), so the adjacent-pair spacing
+   checked there carries over. The named trio (--chart-income, --chart-expense,
+   --chart-transfer), --chart-net, --chart-debt and --chart-networth are aliases
+   of those ramps and follow with nothing to restate. Dark is a SELECTED set
+   re-picked against the dark surface, not a lightened copy. */
+html[data-graph-theme="labradorite"],
+.settings-graph-swatch[data-graph-theme="labradorite"] {
+    --chart-1: #1c68dc;   /* bright blue */
+    --chart-2: #a69a30;   /* yellow */
+    --chart-3: #18a044;   /* bright green */
+    --chart-4: #5a7890;   /* blue-grey */
+    --chart-5: #243f78;   /* navy */
+    --chart-6: #5a9585;   /* green-grey */
+    --chart-7: #7a6e3a;   /* khaki */
+    --chart-8: #58a6ee;   /* sky */
+
+    --chart-inflow-1: #005e21;
+    --chart-inflow-2: #00732b;
+    --chart-inflow-3: #038935;
+    --chart-inflow-4: #069f3f;
+    --chart-inflow-5: #16b54b;
+    --chart-inflow-6: #3aca60;
+
+    --chart-outflow-1: #746a2a;
+    --chart-outflow-2: #807636;
+    --chart-outflow-3: #8e8344;
+    --chart-outflow-4: #9c9252;
+    --chart-outflow-5: #aca162;
+    --chart-outflow-6: #bcb271;
+    --chart-outflow-7: #cdc282;
+    --chart-outflow-8: #dfd493;
+
+    --chart-balance-1: #374b57;   /* donut: cash */
+    --chart-balance-2: #465b67;
+    --chart-balance-3: #566b78;
+    --chart-balance-4: #667b88;   /* donut: investments */
+    --chart-balance-5: #768c99;
+    --chart-balance-6: #889eac;
+    --chart-balance-7: #99afbd;   /* donut: retirement */
+    --chart-balance-8: #aac1cf;
+
+    --cat-1: var(--chart-1);
+    --cat-2: var(--chart-2);
+    --cat-3: var(--chart-3);
+    --cat-4: var(--chart-4);
+    --cat-5: var(--chart-5);
+    --cat-6: var(--chart-6);
+    --cat-7: var(--chart-7);
+    --cat-8: var(--chart-8);
+}
+
+/* The same colours re-picked for the dark surface. Two attributes deep, so it
+   outweighs the light block above whichever order they land in. */
+html[data-graph-theme="labradorite"][data-theme="dark"],
+html[data-theme="dark"] .settings-graph-swatch[data-graph-theme="labradorite"] {
+    --chart-1: #4c92f5;   /* bright blue */
+    --chart-2: #c8ba48;   /* yellow */
+    --chart-3: #3ccb68;   /* bright green */
+    --chart-4: #8aa2b8;   /* blue-grey */
+    --chart-5: #3f68b0;   /* navy */
+    --chart-6: #7fbaa6;   /* green-grey */
+    --chart-7: #a39a58;   /* khaki */
+    --chart-8: #86c0f8;   /* sky */
+
+    --chart-inflow-1: #02782e;
+    --chart-inflow-2: #008d36;
+    --chart-inflow-3: #00a240;
+    --chart-inflow-4: #1ab64d;
+    --chart-inflow-5: #3aca60;
+    --chart-inflow-6: #53de73;
+
+    --chart-balance-1: #576c79;   /* donut: cash */
+    --chart-balance-2: #657a87;
+    --chart-balance-3: #738996;
+    --chart-balance-4: #8298a5;   /* donut: investments */
+    --chart-balance-5: #90a6b4;
+    --chart-balance-6: #9fb6c4;
+    --chart-balance-7: #aec5d3;   /* donut: retirement */
+    --chart-balance-8: #bed5e3;
 }

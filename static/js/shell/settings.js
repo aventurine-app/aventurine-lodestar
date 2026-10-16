@@ -47,25 +47,10 @@
 
     const _prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-    // 'colorful' is light with an accent sidebar and is the default when nothing
-    // is stored (DEFAULT_THEME), '' is plain light, 'dark' is dark, 'system'
-    // follows the OS. resolveTheme turns the stored choice into the
-    // data-theme value actually painted — only 'system' needs resolving, so a
-    // new theme is a CSS block plus a picker button and nothing here.
-    // Matches the same fallback in shell/theme-init.js, which paints pre-load.
-    const DEFAULT_THEME = 'colorful';
-
-    // The stored choice, with the shipped default standing in for an absent key.
-    // '' is read straight through, so plain Light stays a remembered choice.
-    function savedTheme() {
-        const v = localStorage.getItem('color-theme');
-        return v === null ? DEFAULT_THEME : v;
-    }
-
-    function resolveTheme(theme) {
-        if (theme === 'system') return _prefersDark.matches ? 'dark' : '';
-        return theme;
-    }
+    // Which surfaces exist and what the defaults are both live in
+    // shell/theme-init.js (window.appTheme), which also paints pre-load. This
+    // file only handles the picker: 'colorful' is light with an accent sidebar,
+    // '' is plain light, 'dark' is dark, 'system' follows the OS.
 
     // Switching the theme swaps tokens on <html>, so everything painted by CSS
     // updates immediately. Only the charts go stale, since they write
@@ -74,22 +59,17 @@
     // from the state they hold. This used to reload the page instead, which
     // closed the open Settings modal.
     function applyTheme(theme) {
-        const effective = resolveTheme(theme);
-        if (effective) {
-            document.documentElement.dataset.theme = effective;
-        } else {
-            delete document.documentElement.dataset.theme;
-        }
         localStorage.setItem('color-theme', theme);
-        syncThemeButtons();
+        appTheme.apply();
+        const effective = document.documentElement.dataset.theme ?? '';
         window.dispatchEvent(new CustomEvent('themechange', { detail: { theme, effective } }));
     }
 
     // Reflect the stored choice on every picker instance (page + title-bar modal).
     function syncThemeButtons() {
-        const saved = savedTheme();
+        const current = appTheme.surface();
         document.querySelectorAll('.settings-theme-btn').forEach(btn => {
-            btn.classList.toggle('active', (btn.dataset.theme ?? '') === saved);
+            btn.classList.toggle('active', (btn.dataset.theme ?? '') === current);
         });
     }
 
@@ -100,7 +80,7 @@
         });
         // Re-resolve live when the OS flips while 'system' is selected.
         _prefersDark.addEventListener('change', () => {
-            if (savedTheme() === 'system') applyTheme('system');
+            if (appTheme.surface() === 'system') applyTheme('system');
         });
     }
 
@@ -110,8 +90,8 @@
     // ── Graph palette ─────────────────────────────────────────────────────────
     // The second appearance axis: the theme above sets the page colours, this
     // sets the chart colours, and the two combine (see themes.css). '' is the
-    // accent-derived ramp — the default, and the reason it stores an empty string
-    // rather than the word 'accent': an absent attribute uses the --chart-*
+    // accent-derived ramp, and the reason it stores an empty string rather than
+    // the word 'accent': an absent attribute uses the --chart-*
     // definitions in style.css, with no override block to keep in sync.
     //
     // Switching it is the same token swap the theme does, so it reuses the same
@@ -120,20 +100,15 @@
     // second event name would duplicate this one and every listener would have
     // to bind both.
     function applyGraphTheme(palette) {
-        if (palette) {
-            document.documentElement.dataset.graphTheme = palette;
-        } else {
-            delete document.documentElement.dataset.graphTheme;
-        }
         localStorage.setItem('graph-theme', palette);
-        syncGraphButtons();
+        appTheme.apply();
         window.dispatchEvent(new CustomEvent('themechange', { detail: { graphTheme: palette } }));
     }
 
     function syncGraphButtons() {
-        const saved = localStorage.getItem('graph-theme') ?? '';
+        const current = appTheme.graph();
         document.querySelectorAll('.settings-graph-btn').forEach(btn => {
-            btn.classList.toggle('active', (btn.dataset.graphTheme ?? '') === saved);
+            btn.classList.toggle('active', (btn.dataset.graphTheme ?? '') === current);
         });
     }
 
@@ -145,6 +120,13 @@
     }
 
     wireGraphButtons();
+
+    // Every change funnels through 'themechange' (a pick or the OS flipping), so
+    // the buttons are re-synced here once rather than at each call site.
+    window.addEventListener('themechange', () => {
+        syncThemeButtons();
+        syncGraphButtons();
+    });
 
 
     // ── Display preferences (localStorage-backed pill toggles + selects) ───────

@@ -206,7 +206,7 @@
             submitBtn.textContent = 'Open';
             setHint(opts.needPassword
                 ? 'This database is encrypted — enter its password.'
-                : 'Choose an existing Aventurine database file.');
+                : 'Choose an existing Lodestar database file.');
             if (opts.path) pathInput.value = opts.path;
         } else {
             titleEl.textContent  = 'Unlock Database';

@@ -688,7 +688,7 @@
             return `
                 <div class="tx-found-note">
                     ${n} transaction${n !== 1 ? 's' : ''} will be left uncategorized —
-                    Aventurine only fills in what it's sure of. Set ${n !== 1 ? 'them' : 'it'}
+                    Lodestar only fills in what it's sure of. Set ${n !== 1 ? 'them' : 'it'}
                     once in your ledger and it'll remember next time.
                 </div>`;
         }

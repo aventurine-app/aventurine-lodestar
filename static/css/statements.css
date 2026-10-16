@@ -76,6 +76,14 @@
    [hidden] { display: none }, so it is restated at author level. */
 .db-outer[hidden] { display: none; }
 
+/* Tighter bottom corners on the Cash Flow and Balance Sheet cards only; the
+   top keeps the shared 12px card radius (tables.css). The wrapper scrollbar's
+   3px inset clears a 6px arc with more room than the 12px one it was sized for. */
+.stmt-page .db-wrapper {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
 /* Shown when the selected year has no table in this tab (or no years exist). */
 .stmt-empty {
     margin: 0;

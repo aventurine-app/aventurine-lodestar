@@ -703,7 +703,7 @@
         // Focus starts on the current choice when there is one.
         requestAnimationFrame(() => {
             if (!pop || pop.el !== el) return;
-            (el.querySelector('[aria-pressed="true"]:not(:disabled)') || el.querySelector('button:not(:disabled)'))?.focus();
+            (el.querySelector('[aria-pressed="true"]:not(:disabled)') || el.querySelector('button:not(:disabled), input:not(:disabled)'))?.focus();
         });
     }
 
@@ -1104,19 +1104,31 @@
     }
 
     // ─── Gear ────────────────────────────────────────────────────────────────
-    // A card's header menu: its settings fields as segmented choices (Recent
-    // Transactions: which rows it lists), then its own
-    // checkbox list when it has one (Account Balances: which accounts its chips
-    // offer), in the Transactions filter popover's style.
+    // A card's header menu: its settings fields (a segmented choice, or a
+    // percent typed into a box), then its own checkbox list when it has one
+    // (Account Balances: which accounts its chips offer), in the Transactions
+    // filter popover's style.
+    function choiceFieldHtml(card, f) {
+        return `<div class="seg-switch" role="group" aria-label="${escapeHtml(f.label)}">${f.options.map(([value, label]) => {
+            const on = String(card.settings[f.key]) === value;
+            return `<button type="button" class="seg-switch-btn${on ? ' active' : ''}" aria-pressed="${on}"
+                data-field="${escapeHtml(f.key)}" data-value="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
+        }).join('')}</div>`;
+    }
+
+    function percentFieldHtml(card, f) {
+        return `<div class="dash-percent-field">
+            <span class="dash-percent-sign" aria-hidden="true">%</span>
+            <input type="number" class="tx-input tx-input-amount dash-percent-input" inputmode="decimal"
+                min="${f.min}" max="${f.max}" step="any" value="${escapeHtml(card.settings[f.key])}"
+                data-percent="${escapeHtml(f.key)}" aria-label="${escapeHtml(f.label)} percent"></div>`;
+    }
+
     function gearHtml(card) {
         const rt = live.get(card.id);
         const fields = TYPES[card.type].fields.map((f) => `<div class="tx-pop-field">
                 <span class="tx-pop-label">${escapeHtml(f.label)}</span>
-                <div class="seg-switch" role="group" aria-label="${escapeHtml(f.label)}">${f.options.map(([value, label]) => {
-                    const on = String(card.settings[f.key]) === value;
-                    return `<button type="button" class="seg-switch-btn${on ? ' active' : ''}" aria-pressed="${on}"
-                        data-field="${escapeHtml(f.key)}" data-value="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
-                }).join('')}</div>
+                ${f.type === 'percent' ? percentFieldHtml(card, f) : choiceFieldHtml(card, f)}
             </div>`).join('');
         const list = gearList(card, rt);
         if (!list) return fields;
@@ -1158,7 +1170,27 @@
             el.innerHTML = gearHtml(findCard(id));
             el.querySelector(refocus)?.focus();
         });
+        el.addEventListener('change', (e) => commitPercent(id, e.target));
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.matches('[data-percent]')) commitPercent(id, e.target);
+        });
         mountPopover(el, anchor, 'end');
+    }
+
+    /** Save a percent box's value. A blank or out-of-range entry snaps to the
+     *  nearest value the field allows (the saved one when blank) and the box
+     *  shows what was kept. Tenths are the finest step. */
+    function commitPercent(id, input) {
+        const key = input.dataset.percent;
+        const card = findCard(id);
+        const field = card && TYPES[card.type].fields.find((f) => f.key === key);
+        if (!field) return;
+        const typed = input.valueAsNumber;
+        const next = Number.isFinite(typed)
+            ? clamp(Math.round(typed * 10) / 10, field.min, field.max)
+            : card.settings[key];
+        input.value = next;
+        if (next !== card.settings[key]) updateSettings(id, { [key]: next });
     }
 
     /** A chip in a card body switched a series or an account on or off. */

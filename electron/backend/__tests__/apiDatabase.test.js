@@ -67,7 +67,7 @@ test('db: the app profile dir is never proposed for a new database', (t) => {
   // the user's finances inside app internals.
   assert.equal(
     defaultDbDir(path.join(dir, 'profile', 'finance.db')),
-    path.join(dir, 'Documents', 'Aventurine')
+    path.join(dir, 'Documents', 'Lodestar')
   );
   // One the user placed: propose the folder they chose.
   assert.equal(defaultDbDir(path.join(dir, 'Vault', 'ours.db')), path.join(dir, 'Vault'));
@@ -249,7 +249,7 @@ test('db: open foreign sqlite refused before switching', (t) => {
   con.close();
   const r = c.post('/api/db/open', { path: p });
   assert.equal(r.status, 400);
-  assert.ok(r.body.error.includes('Aventurine'));
+  assert.ok(r.body.error.includes('Lodestar'));
   assert.equal(c.get('/api/data').status, 200, 'still on the original DB');
 });
 

@@ -13,7 +13,7 @@ const os = require('os');
 const path = require('path');
 
 // Isolated data dir — set AFTER requiring main.js, not before: main.js
-// re-points userData at the shared 'aventurine-dev' profile at require time (dev
+// re-points userData at the shared 'lodestar-dev' profile at require time (dev
 // isolation from the packaged build), which silently clobbers any earlier
 // setPath and sends every write from this script into the REAL dev database.
 // startBackend derives AVENTURINE_DATA_DIR from userData only at app.whenReady, so
@@ -25,13 +25,13 @@ require('../main.js'); // the real entry: backend, protocol, window
 app.setPath('userData', tmp);
 
 // main.js requests the single-instance lock at REQUIRE time, and in dev it has
-// already re-pointed userData at the shared 'aventurine-dev' profile — before
+// already re-pointed userData at the shared 'lodestar-dev' profile — before
 // the setPath above can isolate us. So a running `npm start` makes this process
 // the losing second instance: main.js calls app.quit(), whenReady never fires,
 // and this script would exit 0 having asserted nothing at all. A verification
 // that passes vacuously is worse than one that fails, so say so and fail.
 if (!app.hasSingleInstanceLock()) {
-  console.error('FAIL — another Aventurine instance holds the single-instance '
+  console.error('FAIL — another Lodestar instance holds the single-instance '
     + 'lock. Close `npm start` (or the installed app) and run this again.');
   process.exit(1);
 }
@@ -60,7 +60,7 @@ app.whenReady().then(async () => {
     const evalJs = (js) => win.webContents.executeJavaScript(js, true);
 
     check('renderer URL is app origin', win.webContents.getURL() === 'app://aventurine/');
-    check('page title', (await evalJs('document.title')).includes('Aventurine'));
+    check('page title', (await evalJs('document.title')).includes('Lodestar'));
     check('navbar rendered', await evalJs('!!document.querySelector(".menu .nav a[href=\'/transactions\']")'));
     // The sidebar is a shared partial; nav.js derives .active from the URL.
     check('home link marked active', await evalJs('document.querySelector(".menu .nav a[href=\'/\']").classList.contains("active")'));

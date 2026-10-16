@@ -1,7 +1,7 @@
 {
-  "name": "aventurine",
+  "name": "lodestar",
   "version": "0.9.8",
-  "description": "Aventurine desktop app — Electron shell + in-process Node backend (electron/backend/).",
+  "description": "Lodestar desktop app — Electron shell + in-process Node backend (electron/backend/).",
   "main": "main.js",
   "private": true,
   "author": "Aventurine <chatgpt.flattered848@passmail.net>",

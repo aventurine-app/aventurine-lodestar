@@ -99,21 +99,38 @@
     gap: 10px;
 }
 
+/* Forces the next option onto a new line, so each family of surfaces (the base
+   set, the warm pair, the tints) starts a line of its own. */
+.settings-theme-break {
+    flex-basis: 100%;
+    height: 0;
+}
+
 .settings-theme-btn {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     padding: 0;
-    border: 2px solid var(--border);
+    border: 3px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     background: var(--surface2);
     transition: border-color 0.15s ease;
-    overflow: hidden;
 }
 
 .settings-theme-btn:hover  { border-color: var(--text-tertiary); }
-.settings-theme-btn.active { border-color: var(--accent-primary); }
+
+
+/* The tiles do not clip their children: the selected tile's corner badge has to
+   overlap the border, and a clip edge on the border's inner edge leaves a light
+   seam where two anti-aliased edges meet. The previews round their own top
+   corners instead, to the border's inner radius (8px outer less the 3px border). */
+.settings-theme-swatch,
+.settings-graph-swatch {
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+}
 
 /* Three-band preview: top strip = background, middle = surface, bottom = accent.
    The colours derive from the live theme tokens; each swatch's own data-theme
@@ -172,20 +189,55 @@
    their own data-graph-theme context (themes.css), which is why each preview
    shows its true colours while another palette is the live one. */
 .settings-graph-btn {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     padding: 0;
-    border: 2px solid var(--border);
+    border: 3px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     background: var(--surface2);
     transition: border-color 0.15s ease;
-    overflow: hidden;
 }
 
 .settings-graph-btn:hover  { border-color: var(--text-tertiary); }
-.settings-graph-btn.active { border-color: var(--accent-primary); }
+/* The chosen option: a thick black border with a black square set into its
+   top-left corner, flush with the border so the two read as one shape, and a
+   white check inside the square. The square sits over the tile, not beside it,
+   so nothing shifts when an option is chosen. The check is two borders turned
+   45 degrees, because the CSP blocks data: URIs and so an inline icon. */
+.settings-theme-btn.active,
+.settings-graph-btn.active { border-color: #000; }
+
+.settings-theme-btn.active::after,
+.settings-graph-btn.active::after {
+    content: '';
+    position: absolute;
+    /* Starts inside the border ring, not at its inner edge, so it paints black
+       over black and leaves no seam. 0.5px out puts its corner 2.5px in from the
+       tile's edge, inside the 8px outer curve. */
+    left: -0.5px;
+    top: -0.5px;
+    width: 16px;
+    height: 16px;
+    background: #000;
+    border-bottom-right-radius: 5px;
+}
+
+.settings-theme-btn.active::before,
+.settings-graph-btn.active::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    left: 4.5px;
+    top: 2.25px;
+    width: 3px;
+    height: 6px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
 
 .settings-graph-swatch {
     width: 76px;
@@ -204,19 +256,34 @@
     background-position: 10px bottom, 26px bottom, 42px bottom, 58px bottom;
 }
 
+/* The Aventurine ramp is mixed from the UI accent, so the live --chart-accent-*
+   tokens would recolour this preview whenever a tint or the dark surface is
+   picked. The preview is the same four mixes (style.css) taken from the neutral
+   ramp this swatch resets to, with the light theme's accent (600), text (900)
+   and page (100), so it stays one fixed picture of the palette. */
 .settings-graph-swatch[data-graph-theme=""] {
-    --sw-1: var(--chart-accent-1);
-    --sw-2: var(--chart-accent-2);
-    --sw-3: var(--chart-accent-3);
-    --sw-4: var(--chart-accent-4);
+    --sw-1: var(--color-accent-600);
+    --sw-2: color-mix(in srgb, var(--color-accent-600) 50%, var(--color-base-900));
+    --sw-3: color-mix(in srgb, var(--color-accent-600) 72%, var(--color-base-100));
+    --sw-4: color-mix(in srgb, var(--color-accent-600) 25%, var(--color-base-900));
 }
 
 .settings-graph-swatch[data-graph-theme="gemstone"],
-.settings-graph-swatch[data-graph-theme="opal"] {
+.settings-graph-swatch[data-graph-theme="opal"],
+.settings-graph-swatch[data-graph-theme="labradorite"] {
     --sw-1: var(--chart-1);
     --sw-2: var(--chart-2);
     --sw-3: var(--chart-3);
     --sw-4: var(--chart-4);
+}
+
+/* Lapis Lazuli previews two blues and two golds (slots 1, 2, 4, 5) rather than
+   its first four, which would show three blues to one gold. */
+.settings-graph-swatch[data-graph-theme="lapis"] {
+    --sw-1: var(--chart-1);
+    --sw-2: var(--chart-2);
+    --sw-3: var(--chart-4);
+    --sw-4: var(--chart-5);
 }
 
 .settings-theme-label {
@@ -230,14 +297,38 @@
     padding: 5px 0 6px;
 }
 
-/* System swatch: a split light/dark face standing in for "follow the OS". The
-   light half uses fixed neutrals (it can't borrow the live theme tokens like
-   the other swatches, since it must show both palettes at once). */
+/* System swatch: a split light/dark face standing in for "follow the OS". It
+   shows both palettes at once, so every colour is a fixed neutral: it cannot
+   borrow the live theme tokens like the other swatches. It also carries the
+   shared .settings-theme-swatch class, whose ::before/::after paint the live
+   theme's background strip and accent bar, so those are redrawn here as the same
+   split. Each layer is the full-face diagonal, positioned to its own band, so
+   the seam runs through all three as one line. */
 .settings-theme-swatch-system {
     width: 76px;
     height: 46px;
     flex-shrink: 0;
-    background: linear-gradient(105deg, #f4f1ea 0 50%, #23241f 50% 100%);
+    --sw-split: linear-gradient(105deg, var(--sw-light) 0 50%, var(--sw-dark) 50% 100%);
+    background: var(--sw-split);
+    background-size: 76px 46px;
+    --sw-light: #f2f3f2;
+    --sw-dark:  #191a19;
+}
+
+.settings-theme-swatch-system::before,
+.settings-theme-swatch-system::after {
+    background-size: 76px 46px;
+    background-repeat: no-repeat;
+}
+
+.settings-theme-swatch-system::before {
+    background-image: linear-gradient(105deg, #e5e6e5 0 50%, #0c0d0d 50% 100%);
+    background-position: top left;
+}
+
+.settings-theme-swatch-system::after {
+    background-image: linear-gradient(105deg, #497e74 0 50%, #5b9f92 50% 100%);
+    background-position: bottom left;
 }
 
 /* ── Currency symbol row ────────────────────────────────────────────────

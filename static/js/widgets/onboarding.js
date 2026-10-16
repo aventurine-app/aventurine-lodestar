@@ -104,7 +104,7 @@
                     <h2 class="onb-title">${again ? 'Add another account' : 'Let’s start with one account'}</h2>
                     <p class="onb-sub">${again
                         ? 'Which account is this one from? Pick it, then drop in its export.'
-                        : 'Download a transaction export from your bank — CSV, Excel, OFX/QFX, or QIF — and Aventurine will read it, sort it, and build your statements. Nothing leaves this computer.'}</p>
+                        : 'Download a transaction export from your bank — CSV, Excel, OFX/QFX, or QIF — and Lodestar will read it, sort it, and build your statements. Nothing leaves this computer.'}</p>
                 </div>
 
                 ${imported.length ? `<div class="onb-done-list">

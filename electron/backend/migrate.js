@@ -22,7 +22,7 @@ const { SCHEMA_VERSION, createBaselineSchema, DDL } = require('./schema');
  */
 class SchemaTooNewError extends Error {
   constructor(found, supported) {
-    super(`database schema v${found} was written by a newer version of Aventurine `
+    super(`database schema v${found} was written by a newer version of Lodestar `
         + `(this build understands up to v${supported})`);
     this.name = 'SchemaTooNewError';
     this.code = 'db_schema_too_new';

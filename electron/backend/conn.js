@@ -218,7 +218,7 @@ function createConn() {
       // implying a retry might work.
       if (err instanceof SchemaTooNewError) {
         throw new ApiError(
-          'This database was created by a newer version of Aventurine. '
+          'This database was created by a newer version of Lodestar. '
           + 'Update the app to open it.',
           400
         );

@@ -91,7 +91,7 @@ function main() {
   }
 
   fs.mkdirSync(BUILD_DIR, { recursive: true });
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'aventurine-icons-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lodestar-icons-'));
   try {
     const pngPath = path.join(BUILD_DIR, 'icon.png');
     render(PNG_SIZE, pngPath);

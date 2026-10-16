@@ -61,8 +61,17 @@
 /* ─── 1. Theme — colour tokens ────────────────────────────────────────────────
  * Every downstream rule reads colour through these. To retheme the app,
  * change values here only. The accents are a placeholder olive palette;
- * a real brand palette will replace them once approved. */
-:root {
+ * a real brand palette will replace them once approved.
+ *
+ * The theme-picker swatches name the ramps too. Without that, a swatch inherits
+ * whatever ramp <html> is wearing, so picking a warm or tinted surface recoloured
+ * the Light, Dark and Colorful swatches, and the same went for each option's label
+ * strip. A swatch or option now starts from this neutral ramp, and only the warm
+ * and tint ones (themes.css) override it. */
+:root,
+.settings-theme-swatch,
+.settings-theme-btn,
+.settings-graph-swatch {
   --color-base-050: #f2f3f2;
   --color-base-100: #e5e6e5;
   --color-base-200: #cdd0ce;
@@ -95,8 +104,12 @@
  * contexts are wired the same way in themes.css). Update the palette above
  * and every swatch follows automatically. */
 :root,
-.settings-theme-swatch[data-theme="light"],
-.settings-theme-swatch[data-theme="colorful"],   /* Colorful IS light outside the nav */
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="light"],
+.settings-theme-btn[data-theme=""],
+.settings-theme-btn[data-theme="system"],   /* System's label is a fixed light face; its swatch is a split */
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="warm-light"],
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme^="tint-"],   /* the hue tints are light themes */
+:is(.settings-theme-swatch, .settings-theme-btn)[data-theme="colorful"],   /* Colorful IS light outside the nav */
 [data-ds-theme="light"] {   /* style-free scoping hook — see themes.css dark block */
 
     /* Match native controls (range tracks, etc.) to the active theme rather

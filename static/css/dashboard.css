@@ -1483,6 +1483,31 @@ html[data-theme="dark"] .is-editing .dash-canvas::before {
 }
 .tx-filter-popover.dash-gear-pop { min-width: 200px; max-width: 260px; }
 
+/* A percent field: the % sign sits outside the box, to its left, so typed
+   digits never run under it. The spin buttons are dropped, as the year box's
+   are (tables.css). */
+.dash-percent-field {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+.dash-percent-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.dash-percent-input::-webkit-outer-spin-button,
+.dash-percent-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.dash-percent-sign {
+    flex: none;
+    color: var(--text-tertiary);
+    font-size: var(--size-body);
+}
+
 /* The period picker reads as one centred column: every group the full width of
    the popover, its segments sharing that width equally. */
 .dash-period-pop .tx-pop-field { align-items: stretch; text-align: center; }

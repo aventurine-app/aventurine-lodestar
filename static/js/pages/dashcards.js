@@ -729,9 +729,21 @@
     // ─── Savings Rate ────────────────────────────────────────────────────────
     // The share of income moved into the user's own savings or brokerage
     // accounts: the Transfer columns of the Cash Flow statement over its Income
-    // columns, the Metrics tab's definition (services/reportCard.js), held to
-    // the same 20% goal it grades against.
-    const SAVINGS_GOAL = 0.2;
+    // columns, the Metrics tab's definition (services/reportCard.js). The goal
+    // it is held to starts at the 20% the Metrics tab grades against and is the
+    // card's own setting (a percent), so changing it never moves that grade.
+    const SAVINGS_GOAL_DEFAULT = 20;
+    const SAVINGS_GOAL_MIN = 1;
+    const SAVINGS_GOAL_MAX = 100;
+
+    /** A card's saved goal as a 0-1 share. A value outside the range the gear
+     *  offers (a hand-edited row) draws the default instead of a broken rule. */
+    const savingsGoal = (percent) => (
+        Number.isFinite(percent) && percent >= SAVINGS_GOAL_MIN && percent <= SAVINGS_GOAL_MAX
+            ? percent : SAVINGS_GOAL_DEFAULT
+    ) / 100;
+    /** The goal as typed: 20%, 12.5%, never 20.0%. */
+    const goalText = (goal) => `${Number((goal * 100).toFixed(1))}%`;
     const pctText = (v, digits = 1) => `${(v * 100).toFixed(digits)}%`;
 
     /** Income and transfers per month of the period, and the rate in each. */
@@ -789,7 +801,7 @@
                 svg += `<text class="chart-label" x="${f2(cx)}" y="${H - PB + 18}" text-anchor="middle">${MONTHS_ABBR[m.slot.monthIdx]}</text>`;
             }
         });
-        svg += `<line class="chart-goal" x1="${PL}" y1="${f2(y(goal))}" x2="${W - PR}" y2="${f2(y(goal))}"><title>Goal: ${pctText(goal, 0)}</title></line>`;
+        svg += `<line class="chart-goal" x1="${PL}" y1="${f2(y(goal))}" x2="${W - PR}" y2="${f2(y(goal))}"><title>Goal: ${goalText(goal)}</title></line>`;
         return `${svg}</svg>`;
     }
 
@@ -1133,7 +1145,8 @@
             info: 'The share of income you moved into your own savings or brokerage accounts, across every transfer category.',
             periods: ['month', 'm3', 'm6', 'ytd', 'y1'], period: YEAR_TO_DATE,
             sizes: { S: [3, 3], M: [4, 5], L: [6, 5], XL: [8, 6] }, min: [3, 3],
-            defaults: {}, fields: [],
+            defaults: { goal: SAVINGS_GOAL_DEFAULT },
+            fields: [{ key: 'goal', label: 'Goal', type: 'percent', min: SAVINGS_GOAL_MIN, max: SAVINGS_GOAL_MAX }],
             uses: ['ie'],
             load: (ctx) => ctx.hub.store('ie'),
             render(host, ctx) {
@@ -1146,11 +1159,12 @@
                         : empty(ctx.period.isCurrentMonth ? 'No income this month yet' : `No income in ${ctx.period.label}`);
                     return;
                 }
-                const head = statHtml(escapeHtml(pctText(transfers / income)), `Goal ${pctText(SAVINGS_GOAL, 0)}`);
+                const goal = savingsGoal(ctx.card.settings.goal);
+                const head = statHtml(escapeHtml(pctText(transfers / income)), `Goal ${goalText(goal)}`);
                 // A single month, or a card sized down to a tile, is the figure alone.
                 if (months.length === 1 || ctx.h < 150) { host.innerHTML = head; return; }
                 const { plot, W, H } = chartBody(host, { head });
-                plot.innerHTML = buildRateChartSVG({ months, W, H, animate: ctx.animate, goal: SAVINGS_GOAL });
+                plot.innerHTML = buildRateChartSVG({ months, W, H, animate: ctx.animate, goal });
             },
         },
 

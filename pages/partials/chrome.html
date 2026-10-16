@@ -3,7 +3,7 @@
      (partials/sidebar.html). Spliced into pages/*.html by the app:// protocol
      handler (electron/main.js). Edit here once - every page gets it. -->
     <div class="titlebar">
-        <img class="titlebar-icon" src="/static/icons/logo/logo.svg" alt="Aventurine" draggable="false">
+        <img class="titlebar-icon" src="/static/icons/logo/logo.svg" alt="Lodestar" draggable="false">
         <!-- Back / forward through the session history. Every page is its own
              document under app://, so the trail already exists; these two walk
              it. static/js/shell/history.js wires them and owns the keyboard and
@@ -78,7 +78,7 @@
             <div class="settings-theme-options">
                 <button class="settings-theme-btn" data-theme="colorful">
                     <div class="settings-theme-swatch" data-theme="colorful"></div>
-                    <span class="settings-theme-label">Colorful</span>
+                    <span class="settings-theme-label">Mixed</span>
                 </button>
                 <button class="settings-theme-btn" data-theme="">
                     <div class="settings-theme-swatch" data-theme="light"></div>
@@ -91,6 +91,40 @@
                 <button class="settings-theme-btn" data-theme="system">
                     <div class="settings-theme-swatch settings-theme-swatch-system"></div>
                     <span class="settings-theme-label">System</span>
+                </button>
+                <span class="settings-theme-break"></span>
+                <button class="settings-theme-btn" data-theme="warm-light">
+                    <div class="settings-theme-swatch" data-theme="warm-light"></div>
+                    <span class="settings-theme-label">Warm Light</span>
+                </button>
+                <button class="settings-theme-btn" data-theme="warm-dark">
+                    <div class="settings-theme-swatch" data-theme="warm-dark"></div>
+                    <span class="settings-theme-label">Warm Dark</span>
+                </button>
+                <span class="settings-theme-break"></span>
+                <button class="settings-theme-btn" data-theme="tint-red">
+                    <div class="settings-theme-swatch" data-theme="tint-red"></div>
+                    <span class="settings-theme-label">Red</span>
+                </button>
+                <button class="settings-theme-btn" data-theme="tint-orange">
+                    <div class="settings-theme-swatch" data-theme="tint-orange"></div>
+                    <span class="settings-theme-label">Orange</span>
+                </button>
+                <button class="settings-theme-btn" data-theme="tint-blue">
+                    <div class="settings-theme-swatch" data-theme="tint-blue"></div>
+                    <span class="settings-theme-label">Blue</span>
+                </button>
+                <button class="settings-theme-btn" data-theme="tint-green">
+                    <div class="settings-theme-swatch" data-theme="tint-green"></div>
+                    <span class="settings-theme-label">Green</span>
+                </button>
+                <button class="settings-theme-btn" data-theme="tint-purple">
+                    <div class="settings-theme-swatch" data-theme="tint-purple"></div>
+                    <span class="settings-theme-label">Purple</span>
+                </button>
+                <button class="settings-theme-btn" data-theme="tint-pink">
+                    <div class="settings-theme-swatch" data-theme="tint-pink"></div>
+                    <span class="settings-theme-label">Pink</span>
                 </button>
             </div>
         </div>
@@ -115,6 +149,14 @@
                 <button class="settings-graph-btn" data-graph-theme="opal">
                     <div class="settings-graph-swatch" data-graph-theme="opal"></div>
                     <span class="settings-theme-label">Opal</span>
+                </button>
+                <button class="settings-graph-btn" data-graph-theme="lapis">
+                    <div class="settings-graph-swatch" data-graph-theme="lapis"></div>
+                    <span class="settings-theme-label">Lapis Lazuli</span>
+                </button>
+                <button class="settings-graph-btn" data-graph-theme="labradorite">
+                    <div class="settings-graph-swatch" data-graph-theme="labradorite"></div>
+                    <span class="settings-theme-label">Labradorite</span>
                 </button>
             </div>
         </div>
@@ -383,7 +425,7 @@
 </div>
 
 
-<!-- About. Shows the installed version. (Aventurine has no in-app updater;
+<!-- About. Shows the installed version. (Lodestar has no in-app updater;
      the app never phones home - installs come from the source releases.)
 
      It is a tab of Preferences rather than a modal of its own: one Settings
@@ -396,7 +438,7 @@
      id="settings-panel-about" aria-labelledby="settings-tab-about">
 
 <div class="settings-section">
-    <div class="settings-section-header">Aventurine</div>
+    <div class="settings-section-header">Lodestar</div>
     <div class="settings-card">
         <div class="settings-row">
             <div class="settings-row-label">

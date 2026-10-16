@@ -15,7 +15,7 @@
 //     the shared dev profile at require time), so nothing touches the dev DB.
 //   • documents is re-pointed too. startBackend() hands the real Documents
 //     folder to the backend, and a NEW database is proposed at
-//     <Documents>/Aventurine — without this, creating one writes into the
+//     <Documents>/Lodestar — without this, creating one writes into the
 //     user's actual Documents folder.
 //
 // DATA — invented, from a seeded generator, so a re-run produces the identical
@@ -352,26 +352,32 @@ app.whenReady().then(async () => {
       await click(`.dash-card[data-type="${type}"] [data-act="period"]`);
       await sleep(400);
     };
+    // A press outside the picker closes it (the page listens for pointerdown on
+    // the document), which is what a click on empty page does. Escape does not
+    // reliably reach it from inside the month stepper.
     const closeDashboardPicker = async () => {
-      await js(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`);
+      await js(`document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))`);
       await sleep(250);
+      if (await js(`!!document.querySelector('.dash-period-pop')`)) missing.push('dashboard picker would not close');
     };
 
     /** The Dashboard's month cards on the month before this one. The seeded
      *  ledger stops at today, so the current month is a part-month and the
-     *  cards would open on a half paycheque against a half month of spending. */
+     *  cards would open on a half paycheque against a half month of spending.
+     *  Only the two month cards (Monthly Cash Flow, Breakdown) have a month
+     *  field; Spending is a year-to-date trend and keeps its range.
+     *
+     *  The picker follows the calendar until "Current month" is unticked, which
+     *  pins today's month and unlocks the stepper; one step back is then the
+     *  month before. Each picker is closed after, or it stays open in the shot. */
     const dashboardPreviousMonth = async () => {
-      const now = new Date();
-      const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const key = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}`;
-      for (const type of ['cashflow', 'balances', 'spending']) {
+      for (const type of ['cashflow', 'balances']) {
         await openDashboardPicker(type);
-        if (prev.getFullYear() !== now.getFullYear()) {
-          await click('.dash-period-pop [data-pp="year:-1"]');
-          await sleep(150);
-        }
-        await click(`.dash-period-pop [data-pp="month:${key}"]`);
+        if (!(await click('.dash-period-pop [data-pp="latest"]'))) missing.push(`${type} current-month box`);
+        await sleep(200);
+        if (!(await click('.dash-period-pop [data-step="-1"]'))) missing.push(`${type} previous-month step`);
         await sleep(300);
+        await closeDashboardPicker();
       }
     };
 
