@@ -2,7 +2,7 @@
 
 // ─── Software updates ───────────────────────────────────────────────────────
 //
-// Keeps Lodestar current. The renderer drives it over IPC (preload.js →
+// Keeps Aventurine Manage current. The renderer drives it over IPC (preload.js →
 // window.electronUpdater, UI in static/js/shell/updates.js): it reads the
 // current state, toggles automatic updates, asks for a check, and is pushed
 // every state change on 'update:status'.
@@ -236,7 +236,7 @@ function initUpdater({ getWindow }) {
         // blocks this process while the password prompt is up. The database is
         // closed by main.js's will-quit handler on the way out.
         //   isSilent=false: the Windows installer shows its progress window.
-        //   isForceRunAfter=true: reopen Lodestar when it's done.
+        //   isForceRunAfter=true: reopen Aventurine Manage when it's done.
         setTimeout(() => getUpdater().quitAndInstall(false, true), 150);
     }
 

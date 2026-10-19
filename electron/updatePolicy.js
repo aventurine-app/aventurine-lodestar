@@ -23,7 +23,7 @@ const path = require('path');
 // change both together or the in-place updater and the notify-only check will
 // read different release lists.
 const RELEASE_OWNER = 'aventurine-app';
-const RELEASE_REPO = 'aventurine-lodestar';
+const RELEASE_REPO = 'aventurine-manage';
 
 const LATEST_RELEASE_API =
     `https://api.github.com/repos/${RELEASE_OWNER}/${RELEASE_REPO}/releases/latest`;

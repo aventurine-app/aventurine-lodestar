@@ -115,7 +115,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lodestar-installers-${{ github.ref_name }}
+          name: aventurine-manage-installers-${{ github.ref_name }}
           path: |
             electron/dist/*.AppImage
             electron/dist/*.rpm
@@ -180,7 +180,7 @@ jobs:
       - name: Upload macOS installers as artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: lodestar-installers-mac-${{ github.ref_name }}
+          name: aventurine-manage-installers-mac-${{ github.ref_name }}
           path: electron/dist/*.dmg
           if-no-files-found: error
 
@@ -200,7 +200,7 @@ jobs:
       contents: write   # create the release and upload its assets
     steps:
       # Both artifacts flattened into one directory. The pattern matches
-      # `lodestar-installers-<tag>` and `lodestar-installers-mac-<tag>`.
+      # `aventurine-manage-installers-<tag>` and `aventurine-manage-installers-mac-<tag>`.
       # continue-on-error because a run where both build jobs failed has no
       # artifacts at all, and that must still produce the source-only release.
       - name: Collect the built installers
@@ -208,7 +208,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: installers
-          pattern: lodestar-installers-*
+          pattern: aventurine-manage-installers-*
           merge-multiple: true
 
       # Create the release, or upload into it if it already exists. The second

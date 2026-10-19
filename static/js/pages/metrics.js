@@ -388,7 +388,7 @@
       host.innerHTML = UI.emptyState({
         icon: 'target',
         title: 'No metrics yet',
-        desc: 'Add a year of income and expenses and Lodestar works out the ratios behind it, and grades the year against six money goals.',
+        desc: 'Add a year of income and expenses and Aventurine Manage works out the ratios behind it, and grades the year against six money goals.',
         action: { label: 'Add transactions', href: '/transactions', primary: true },
       });
       return;

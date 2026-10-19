@@ -43,9 +43,9 @@
     // What "automatic" does depends on what this install can do
     // (updatePolicy.js, resolveUpdateMode).
     const AUTO_DESCRIPTIONS = {
-        replace: 'Checks for a new version when Lodestar starts and every few hours, downloads it in the background, and installs it the next time you quit.',
-        package: 'Checks for a new version when Lodestar starts and every few hours and downloads it in the background. Installing needs your administrator password, so it waits for you to choose Restart & Install.',
-        notify:  'Checks for a new version when Lodestar starts and every few hours. This copy can’t install updates itself, so you’ll get a link to the download page.',
+        replace: 'Checks for a new version when Aventurine Manage starts and every few hours, downloads it in the background, and installs it the next time you quit.',
+        package: 'Checks for a new version when Aventurine Manage starts and every few hours and downloads it in the background. Installing needs your administrator password, so it waits for you to choose Restart & Install.',
+        notify:  'Checks for a new version when Aventurine Manage starts and every few hours. This copy can’t install updates itself, so you’ll get a link to the download page.',
     };
 
     let current = null;
@@ -55,11 +55,11 @@
         switch (s.state) {
             case 'checking':    return 'Checking for updates…';
             case 'up-to-date':  return `You have the latest version, ${s.currentVersion}.`;
-            case 'available':   return `Lodestar ${s.newVersion} is available.`;
+            case 'available':   return `Aventurine Manage ${s.newVersion} is available.`;
             case 'downloading': return `Downloading ${version} (${Math.floor(s.percent || 0)}%)…`;
             case 'downloaded':  return s.mode === 'package'
-                ? `Lodestar ${s.newVersion} is ready. Installing asks for your administrator password.`
-                : `Lodestar ${s.newVersion} is ready. It installs when you quit, or you can restart now.`;
+                ? `Aventurine Manage ${s.newVersion} is ready. Installing asks for your administrator password.`
+                : `Aventurine Manage ${s.newVersion} is ready. It installs when you quit, or you can restart now.`;
             case 'installing':  return `Installing ${version}…`;
             // idle, and error (whose message shows on its own line below)
             default:            return `You have version ${s.currentVersion}.`;
@@ -119,13 +119,13 @@
         if (prev && prev.state === s.state) return;
         if (s.state === 'downloaded') {
             UI.toast(s.mode === 'package'
-                ? `Lodestar ${s.newVersion} is ready to install.`
-                : `Lodestar ${s.newVersion} is ready. It installs when you quit.`, {
+                ? `Aventurine Manage ${s.newVersion} is ready to install.`
+                : `Aventurine Manage ${s.newVersion} is ready. It installs when you quit.`, {
                 duration: 10000,
                 action: { label: 'Restart & Install', run: () => call(updater.install) },
             });
         } else if (s.state === 'available' && s.mode === 'notify') {
-            UI.toast(`Lodestar ${s.newVersion} is available.`, {
+            UI.toast(`Aventurine Manage ${s.newVersion} is available.`, {
                 duration: 10000,
                 action: { label: 'Download', run: openDownloadPage },
             });

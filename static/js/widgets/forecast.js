@@ -197,7 +197,7 @@
         icon: 'forecast',
         title: 'Nothing to forecast yet',
         desc: 'Import a few months of transactions, or record a cash balance on your Balance Sheet, '
-          + 'and Lodestar will project your balance forward from them.',
+          + 'and Aventurine Manage will project your balance forward from them.',
         action: { label: 'Add transactions', href: '/transactions', primary: true },
       });
       return;

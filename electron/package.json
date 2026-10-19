@@ -1,7 +1,8 @@
 {
-  "name": "lodestar",
+  "name": "aventurine-manage",
   "version": "0.9.8",
-  "description": "Lodestar desktop app — Electron shell + in-process Node backend (electron/backend/).",
+  "description": "Aventurine Manage desktop app — Electron shell + in-process Node backend (electron/backend/).",
+  "desktopName": "aventurine-manage.desktop",
   "main": "main.js",
   "private": true,
   "author": "Aventurine <chatgpt.flattered848@passmail.net>",

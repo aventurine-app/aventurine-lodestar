@@ -16,8 +16,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-// Folder name used under Documents for the out-of-the-box database location.
-const APP_FOLDER = 'Lodestar';
+// Folder name proposed under Documents for a new database (defaultDbDir). Only a
+// suggestion: existing databases are found through the pointer file, wherever
+// they are, so renaming this strands nothing.
+const APP_FOLDER = 'Aventurine Manage';
 
 function dataDir() {
   const d = process.env.AVENTURINE_DATA_DIR;
@@ -57,7 +59,7 @@ function documentsDir() {
  * ~/Vault proposes ~/Vault for the next one — EXCEPT when that folder is the
  * app's own profile dir, which is internal and not a place to store user files.
  * A never-moved default database therefore falls through to
- * <Documents>/Lodestar. Nothing is created here: proposing a location does not
+ * <Documents>/Aventurine Manage. Nothing is created here: proposing a location does not
  * touch the disk (the create route mkdirs the parent when a file is written).
  */
 function defaultDbDir(activePath) {

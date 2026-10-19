@@ -35,13 +35,13 @@ require('../main.js');
 app.setPath('userData', tmp);
 
 // main.js requests the single-instance lock at REQUIRE time, and in dev it has
-// already re-pointed userData at the shared 'lodestar-dev' profile — before
+// already re-pointed userData at the shared 'aventurine-manage-dev' profile — before
 // the setPath above can isolate us. So a running `npm start` makes this process
 // the losing second instance: main.js calls app.quit(), whenReady never fires,
 // and the script would exit 0 having asserted nothing at all. A verification
 // that passes vacuously is worse than one that fails, so say so and fail.
 if (!app.hasSingleInstanceLock()) {
-  console.error('LOCK: FAIL — another Lodestar instance holds the single-instance '
+  console.error('LOCK: FAIL — another Aventurine Manage instance holds the single-instance '
     + 'lock. Close `npm start` (or the installed app) and run this again.');
   process.exit(1);
 }

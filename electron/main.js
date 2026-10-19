@@ -1,6 +1,6 @@
 'use strict';
 
-// ─── Electron shell for Lodestar ─────────────────────────────────────────
+// ─── Electron shell for Aventurine Manage ────────────────────────────────
 //
 // The backend runs in THIS process (electron/backend/) and the renderer reaches
 // it over IPC ('api:request' → backend/routes.dispatch). There is no HTTP
@@ -51,16 +51,41 @@ protocol.registerSchemesAsPrivileged([
 // pages/partials/chrome.html.
 Menu.setApplicationMenu(null);
 
-// One-time rebrand migrations (Oliv → Aventurine, 2026-07; Aventurine → Lodestar,
-// 2026-10): the userData dir
-// name derives from the app name, so the rename would strand any existing
-// profile ('Oliv' packaged, 'oliv-dev' dev). If the old dir exists and the new
-// one doesn't, move it, and re-point a pointer-file path that lived inside it.
-// A custom DB outside the profile is an absolute path and unaffected.
+// One-time rebrand migrations. The userData dir is named after package.json
+// "name" (there is no productName in package.json, and electron-builder's
+// productName does not reach it), so each rename would strand the existing
+// profile, and with it the default database and every setting. The names so far:
+//   oliv → aventurine (2026-07, what released builds up to 0.9.8 use)
+//   → lodestar (2026-10, never released) → aventurine-manage (2026-10)
+// These are the exact folder names, lowercase: Linux paths are case-sensitive.
+// If an old dir exists and the new one holds no data yet, move the old one's
+// contents in, and re-point a pointer-file path that lived inside it. A custom
+// DB outside the profile is an absolute path and unaffected.
+//
+// "Holds no data yet" is checked on the data/ folder, not on the profile folder
+// itself: Electron creates the userData folder (Crashpad/) before this code
+// runs, so on the first launch after a rename it always exists already. That is
+// also why the move goes entry by entry. Anything Electron made first wins, and
+// the old copy of it stays behind in the old folder.
+//
+// Newest name first: only the first old profile found is moved (after that the
+// new one has data/), and the most recent one is what the user was last running.
+const LEGACY_PROFILES     = ['lodestar', 'aventurine', 'oliv'];
+const LEGACY_DEV_PROFILES = ['lodestar-dev', 'aventurine-dev', 'oliv-dev'];
+
 function migrateLegacyProfile(oldDir, newDir) {
     try {
-        if (!fs.existsSync(oldDir) || fs.existsSync(newDir)) return;
-        fs.renameSync(oldDir, newDir);
+        if (!fs.existsSync(oldDir) || fs.existsSync(path.join(newDir, 'data'))) return;
+        fs.mkdirSync(newDir, { recursive: true });
+        for (const entry of fs.readdirSync(oldDir)) {
+            const target = path.join(newDir, entry);
+            if (!fs.existsSync(target)) fs.renameSync(path.join(oldDir, entry), target);
+        }
+        try {
+            fs.rmdirSync(oldDir);
+        } catch {
+            // Not empty: only Electron's own leftovers (Crashpad/) remain.
+        }
         const pointer = path.join(newDir, 'data', 'active-db.json');
         const d = JSON.parse(fs.readFileSync(pointer, 'utf8'));
         if (typeof d.path === 'string' && d.path.startsWith(oldDir + path.sep)) {
@@ -74,8 +99,9 @@ function migrateLegacyProfile(oldDir, newDir) {
 }
 
 // Dev (npm start) uses a separate profile so it does not share state with an
-// installed /opt/Lodestar build. Both default to the 'Lodestar' userData dir,
-// so running dev while the packaged app is open leaves the second instance
+// installed "/opt/Aventurine Manage" build. Both would otherwise use the
+// 'aventurine-manage' userData dir, so running dev while the packaged app is
+// open leaves the second instance
 // contending for the Chromium DOM-Storage LevelDB lock: the renderer's first
 // localStorage access then stalls ~4s (twice — localStorage + sessionStorage)
 // before falling back to in-memory, which produces the "blank for seconds on
@@ -84,12 +110,14 @@ function migrateLegacyProfile(oldDir, newDir) {
 // startBackend, which derives AVENTURINE_DATA_DIR from userData.
 if (app.isPackaged) {
     const profile = app.getPath('userData');
-    migrateLegacyProfile(path.join(app.getPath('appData'), 'Oliv'), profile);
-    migrateLegacyProfile(path.join(app.getPath('appData'), 'Aventurine'), profile);
+    for (const name of LEGACY_PROFILES) {
+        migrateLegacyProfile(path.join(app.getPath('appData'), name), profile);
+    }
 } else {
-    const devDir = path.join(app.getPath('appData'), 'lodestar-dev');
-    migrateLegacyProfile(path.join(app.getPath('appData'), 'oliv-dev'), devDir);
-    migrateLegacyProfile(path.join(app.getPath('appData'), 'aventurine-dev'), devDir);
+    const devDir = path.join(app.getPath('appData'), 'aventurine-manage-dev');
+    for (const name of LEGACY_DEV_PROFILES) {
+        migrateLegacyProfile(path.join(app.getPath('appData'), name), devDir);
+    }
     app.setPath('userData', devDir);
 }
 
@@ -157,7 +185,7 @@ function startBackend() {
                 cancelId:  0,
                 noLink:    true,
                 title:     'Confirm file write',
-                message:   'Lodestar is about to write to a location you didn’t pick from a file dialog:',
+                message:   'Aventurine Manage is about to write to a location you didn’t pick from a file dialog:',
                 detail:    `${filePath}\n\nContinue only if you started this action. Cancel if you didn’t.`,
             });
             return choice === 1;
@@ -347,7 +375,7 @@ async function createWindow() {
     const win = new BrowserWindow({
         width:  1280,
         height: 800,
-        title:  'Lodestar',
+        title:  'Aventurine Manage',
         // Frameless: the page draws the title bar (pages/partials/chrome.html).
         frame:            false,
         backgroundColor:  '#212121',
@@ -428,14 +456,14 @@ app.whenReady().then(async () => {
         // file and both ways out, rather than reporting it as a generic crash.
         if (err && err.code === 'db_schema_too_new') {
             const dbPath = (conn && conn.state && conn.state.path) || '(unknown location)';
-            dialog.showErrorBox('Lodestar',
-                'This database was created by a newer version of Lodestar, so this '
+            dialog.showErrorBox('Aventurine Manage',
+                'This database was created by a newer version of Aventurine Manage, so this '
                 + 'version cannot open it.\n\n'
                 + `${dbPath}\n\n`
-                + 'Install the newer version of Lodestar to open it — or rename this '
-                + 'file and Lodestar will start again with a new, empty database.');
+                + 'Install the newer version of Aventurine Manage to open it — or rename this '
+                + 'file and Aventurine Manage will start again with a new, empty database.');
         } else {
-            dialog.showErrorBox('Lodestar', `The database backend failed to start:\n${err.message}`);
+            dialog.showErrorBox('Aventurine Manage', `The database backend failed to start:\n${err.message}`);
         }
         app.quit();
         return;

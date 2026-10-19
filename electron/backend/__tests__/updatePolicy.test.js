@@ -15,7 +15,7 @@ const path = require('path');
 const policy = require('../../updatePolicy');
 
 function tempDir(t) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lodestar-update-prefs-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aventurine-manage-update-prefs-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   return dir;
 }
@@ -54,7 +54,7 @@ test('update mode: the package-type marker wins over APPIMAGE, as in electron-up
 
 test('update mode: an AppImage replaces its own file', () => {
   assert.equal(policy.resolveUpdateMode({
-    platform: 'linux', isPackaged: true, env: { APPIMAGE: '/home/u/lodestar.AppImage' },
+    platform: 'linux', isPackaged: true, env: { APPIMAGE: '/home/u/aventurine-manage.AppImage' },
   }), 'replace');
 });
 
@@ -106,7 +106,7 @@ test('download page: a fixed https URL on the release repository', () => {
   const u = new URL(policy.DOWNLOAD_PAGE_URL);
   assert.equal(u.protocol, 'https:');
   assert.equal(u.host, 'github.com');
-  assert.ok(u.pathname.startsWith('/aventurine-app/aventurine-lodestar/releases'));
+  assert.ok(u.pathname.startsWith('/aventurine-app/aventurine-manage/releases'));
 });
 
 // ── electron-updater's install ID ───────────────────────────────────────────

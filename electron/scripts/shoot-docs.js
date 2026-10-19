@@ -15,7 +15,7 @@
 //     the shared dev profile at require time), so nothing touches the dev DB.
 //   • documents is re-pointed too. startBackend() hands the real Documents
 //     folder to the backend, and a NEW database is proposed at
-//     <Documents>/Lodestar — without this, creating one writes into the
+//     <Documents>/Aventurine Manage — without this, creating one writes into the
 //     user's actual Documents folder.
 //
 // DATA — invented, from a seeded generator, so a re-run produces the identical

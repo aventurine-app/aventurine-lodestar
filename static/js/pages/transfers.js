@@ -146,7 +146,7 @@
         : UI.emptyState({
             icon: 'chart',
             title: 'Nothing saved or invested yet',
-            desc: 'Set a category to Transfer and Lodestar will chart what you put away.',
+            desc: 'Set a category to Transfer and Aventurine Manage will chart what you put away.',
             action: { label: 'Open transactions', href: '/transactions', primary: true },
           });
       return;

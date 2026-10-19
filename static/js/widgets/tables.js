@@ -1,7 +1,7 @@
 'use strict';
 
 // ============================================================================
-// tables.js — Shared table behavior for Lodestar spreadsheet pages.
+// tables.js — Shared table behavior for Aventurine Manage spreadsheet pages.
 // ============================================================================
 //
 // Loaded BEFORE each spreadsheet page's script. Provides two layers:
