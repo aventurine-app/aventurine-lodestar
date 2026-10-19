@@ -23,8 +23,14 @@ name: release
 # The release is created as a DRAFT for review. Publishing it is a manual step,
 # and it is that click that fires notify-website.yml.
 #
-# NOTE — no auto-update: the app ships no in-app updater (electron-updater was
-# removed). Users update by installing a newer build.
+# IN-APP UPDATES read this release. Installed copies (electron/updater.js) look
+# at the latest PUBLISHED release, so publishing the draft is also what offers
+# the update to every Windows and Linux user, and is what macOS users are told
+# about. Windows and Linux copies need the metadata files attached alongside
+# the installers: latest.yml (Windows), latest-linux.yml (AppImage, deb and rpm)
+# and the .blockmap files used for differential downloads. If a platform's
+# metadata is missing, its installed copies report a failed check instead of
+# updating. Re-running the workflow attaches it, the same as for a missing .exe.
 on:
   push:
     tags:
@@ -100,11 +106,11 @@ jobs:
         working-directory: electron
         run: npm run dist:win -- --publish never
 
-      # Hand the installers to the `release` job. `if: always()` so the Linux
-      # installers still upload when the best-effort Windows step above failed
-      # (Linux always produces files, so if-no-files-found:error stays
-      # satisfied). *.exe does not match *.exe.blockmap, so the blockmap and
-      # electron-builder's latest*.yml metadata stay out of the release.
+      # Hand the installers and the update metadata to the `release` job.
+      # `if: always()` so the Linux files still upload when the best-effort
+      # Windows step above failed (Linux always produces files, so
+      # if-no-files-found:error stays satisfied). latest-linux.yml is one file
+      # covering all three Linux packages; latest.yml is Windows'.
       - name: Upload installers as artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -115,6 +121,9 @@ jobs:
             electron/dist/*.rpm
             electron/dist/*.deb
             electron/dist/*.exe
+            electron/dist/*.blockmap
+            electron/dist/latest.yml
+            electron/dist/latest-linux.yml
           if-no-files-found: error
 
   # macOS installers. Separate job because there is no cross-build: electron-builder
@@ -222,10 +231,19 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          files=(installers/*.AppImage installers/*.rpm installers/*.deb installers/*.exe installers/*.dmg)
+          installers=(installers/*.AppImage installers/*.rpm installers/*.deb installers/*.exe installers/*.dmg)
+          # Read by installed copies' updaters, never by people. Globs rather
+          # than literal names so nullglob drops a file that wasn't built. The
+          # artifacts only ever hold latest.yml and latest-linux.yml: the mac
+          # job uploads its .dmg files alone, since macOS copies can't update
+          # in place (see the mac: block in electron-builder.yml).
+          metadata=(installers/latest*.yml installers/*.blockmap)
+          files=("${installers[@]}" "${metadata[@]}")
 
-          echo "count=${#files[@]}" >> "$GITHUB_OUTPUT"
-          echo "Attaching ${#files[@]} file(s) to $TAG:"
+          # `count` is installers only: metadata without an installer to
+          # describe is no release, and the check below should still fail it.
+          echo "count=${#installers[@]}" >> "$GITHUB_OUTPUT"
+          echo "Attaching ${#installers[@]} installer(s) and ${#metadata[@]} update file(s) to $TAG:"
           if [ ${#files[@]} -gt 0 ]; then
             printf '  %s\n' "${files[@]}"
           fi

@@ -58,6 +58,22 @@ contextBridge.exposeInMainWorld('electronApp', {
     getVersion: () => ipcRenderer.invoke('app:version'),
 });
 
+// Software updates (electron/updater.js; UI in static/js/shell/updates.js).
+// Every call resolves to the same state snapshot the 'update:status' push
+// carries. None of them takes a URL or a path: the download page is fixed in
+// the main process, so the page cannot point the browser anywhere else.
+contextBridge.exposeInMainWorld('electronUpdater', {
+    getState:         () => ipcRenderer.invoke('update:get-state'),
+    setAutoUpdate:    (enabled) => ipcRenderer.invoke('update:set-auto', enabled),
+    check:            () => ipcRenderer.invoke('update:check'),
+    download:         () => ipcRenderer.invoke('update:download'),
+    install:          () => ipcRenderer.invoke('update:install'),
+    openDownloadPage: () => ipcRenderer.invoke('update:open-download-page'),
+    // Same lifetime as onNavCommand above: registered once per document and
+    // discarded with it on the next page load.
+    onStatus:         (fn) => ipcRenderer.on('update:status', (_e, status) => fn(status)),
+});
+
 // The data plane. Every /api/* call the page makes goes through here
 // (static/js/core/api.js wraps it in a fetch-shaped interface) straight to the
 // in-process backend — no HTTP server, no socket, no port. The renderer can

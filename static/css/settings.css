@@ -704,4 +704,45 @@
     white-space: nowrap;
 }
 
+/* display:flex outranks the [hidden] attribute. The Updates section stays
+   hidden until updates.js hears back from the main process, and for good in a
+   plain browser. */
+.settings-section[hidden] { display: none; }
+
+/* ── Updates (About tab) ─────────────────────────────────────────────── */
+
+.update-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.update-error {
+    font-size: var(--size-small);
+    line-height: var(--lh-relaxed);
+    color: var(--accent-negative);
+}
+
+.update-progress {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+    overflow: hidden;
+}
+
+/* Scaled rather than sized, so each progress step is a compositor-only
+   change instead of a layout. */
+.update-progress-bar {
+    height: 100%;
+    background: var(--accent-primary);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .update-progress-bar { transition: none; }
+}
+
 

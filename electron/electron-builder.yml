@@ -26,6 +26,8 @@ directories:
 files:
   - main.js
   - preload.js
+  - updater.js
+  - updatePolicy.js
   - backend/**/*
   - node_modules/**/*
   - package.json
@@ -47,15 +49,26 @@ asarUnpack:
 npmRebuild: false
 buildDependenciesFromSource: false
 
-# No publish config and no in-app updater. Lodestar ships no auto-update
-# (electron-updater was removed) and never phones home; CI builds with
-# `--publish never` so electron-builder itself never calls the GitHub API.
-# The installers ARE attached to the release, but the `release` job in
-# .github/workflows/release.yml uploads them, which keeps one place in charge
-# of what ships. Users update by installing a newer build. The win: target
-# below still carries a SECURITY note on Authenticode signing — that is about
-# first-install trust (SmartScreen), independent of the (now removed) update
-# path.
+# Update feed for the in-app updater (../updater.js). electron-builder bakes
+# this into each build as resources/app-update.yml and writes the release
+# metadata electron-updater reads: latest.yml (Windows) and latest-linux.yml
+# (one file listing the AppImage, deb and rpm). The repository is public, so the
+# shipped app needs no token. updatePolicy.js names the same repository for the
+# macOS / dev check; change both together.
+#
+# electron-builder itself still never uploads anything: CI builds with
+# `--publish never`, and the `release` job in .github/workflows/release.yml
+# attaches the installers AND that metadata (plus the .blockmap files used for
+# differential downloads), so one place stays in charge of what ships. A
+# release missing latest*.yml looks like "no update" to every installed copy.
+#
+# Releases are created as drafts, and the feed shows only published releases,
+# so nothing reaches installed copies until the draft is published by hand.
+publish:
+  provider: github
+  owner: aventurine-app
+  repo: aventurine-lodestar
+  releaseType: release
 
 linux:
   target:
@@ -91,13 +104,18 @@ rpm:
 #
 # ── SECURITY: Windows installers are NOT Authenticode-signed yet ──────────────
 # Deliberate, recorded gap (revisit before wider Windows distribution / GA).
-# With no signing block, users see a SmartScreen "unknown publisher" warning on
-# first install. This is purely about first-install trust — the app ships no
-# in-app updater, so there is no update-signature path to worry about.
+# With no signing block:
+#   • Users see a SmartScreen "unknown publisher" warning on first install.
+#   • The in-app updater has no publisher signature to verify, so an update's
+#     integrity rests on the SHA-512 in latest.yml, fetched with the installer
+#     from the same GitHub release over HTTPS. An update is exactly as
+#     trustworthy as the GitHub account that publishes the release.
 # To close it, add code signing (for new — 2023+ — certs the key must live on
 # hardware or a cloud service; file-based .pfx OV certs are no longer issued):
 #   • Azure Trusted Signing  -> win.azureSignOptions (signs from CI/Linux)
 #   • Cloud CSP / hardware    -> win.certificateSubjectName / provider tooling
+# then set win.publisherName to the certificate's subject, so electron-updater
+# refuses any update not signed by it.
 win:
   target:
     - nsis
@@ -139,6 +157,12 @@ nsis:
 # whose app cannot launch. Ad-hoc satisfies the loader but not Gatekeeper, so a
 # downloaded build is still quarantined — the user opens it via right-click →
 # Open, or clears the flag with `xattr -dr com.apple.quarantine`.
+#
+# It also rules out updating in place: the macOS updater (Squirrel.Mac) only
+# accepts an update signed by the same Developer ID as the running app, and
+# needs a zip target this config doesn't build. So macOS copies only check for
+# a new version and link to the download page (updatePolicy.js, 'notify'). With
+# a Developer ID, add a zip target and upload latest-mac.yml to enable it.
 #
 # hardenedRuntime stays OFF: it is only meaningful under a real Developer ID,
 # and ad-hoc + hardened runtime needs the disable-library-validation

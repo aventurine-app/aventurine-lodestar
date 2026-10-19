@@ -425,15 +425,16 @@
 </div>
 
 
-<!-- About. Shows the installed version. (Lodestar has no in-app updater;
-     the app never phones home - installs come from the source releases.)
+<!-- About. The installed version, and software updates.
 
      It is a tab of Preferences rather than a modal of its own: one Settings
      surface, opened one way, with About as its last section. The Settings menu
      still lists About, which opens this modal on this tab.
 
      No Restore Defaults for this tab: the footer carries [data-footer="hide"]
-     from the tab button, since nothing here is a setting to restore. -->
+     from the tab button. The one setting here, Automatic Updates, belongs to the
+     install rather than to the display, so restoring the display defaults
+     leaves it alone. -->
 <div class="settings-tabpanel" data-tabpanel="about" role="tabpanel" hidden
      id="settings-panel-about" aria-labelledby="settings-tab-about">
 
@@ -443,9 +444,54 @@
         <div class="settings-row">
             <div class="settings-row-label">
                 <div class="settings-row-name">Version</div>
-                
+
             </div>
             <div class="about-version" data-about-version>—</div>
+        </div>
+    </div>
+</div>
+
+<!-- Updates. Driven by static/js/shell/updates.js against the electronUpdater
+     bridge (electron/updater.js). Hidden until that bridge answers, so a plain
+     browser never shows controls that can't work. The status line and the one
+     action button beside it change with the update state; the description under
+     Automatic Updates changes with what this install can do (see
+     updatePolicy.js, resolveUpdateMode). -->
+<div class="settings-section" data-updates-section hidden>
+    <div class="settings-section-header">Updates</div>
+    <div class="settings-card">
+        <div class="settings-row">
+            <div class="settings-row-label">
+                <div class="settings-row-name">Automatic Updates</div>
+                <div class="settings-row-desc" data-update-auto-desc></div>
+            </div>
+            <div class="settings-match-toggle seg-switch">
+                <label class="settings-match-option">
+                    <input class="settings-update-radio" type="radio" name="auto_update" value="on">
+                    <span class="settings-match-label seg-switch-btn">On</span>
+                </label>
+                <label class="settings-match-option">
+                    <input class="settings-update-radio" type="radio" name="auto_update" value="off">
+                    <span class="settings-match-label seg-switch-btn">Off</span>
+                </label>
+            </div>
+        </div>
+        <div class="settings-row">
+            <div class="settings-row-label">
+                <div class="settings-row-name">Software Update</div>
+                <div class="settings-row-desc" data-update-status role="status" aria-live="polite"></div>
+                <div class="update-error" data-update-error role="alert" hidden></div>
+            </div>
+            <div class="update-progress" data-update-progress role="progressbar"
+                 aria-label="Download progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+                <div class="update-progress-bar" data-update-progress-bar></div>
+            </div>
+            <div class="update-actions">
+                <button class="button-secondary" data-update-action="check" type="button">Check for Updates</button>
+                <button class="button-primary" data-update-action="download" type="button" hidden>Download</button>
+                <button class="button-primary" data-update-action="install" type="button" hidden>Restart &amp; Install</button>
+                <button class="button-primary" data-update-action="open-download-page" type="button" hidden>Open Download Page</button>
+            </div>
         </div>
     </div>
 </div>

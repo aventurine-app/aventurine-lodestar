@@ -18,6 +18,7 @@ const { app, BrowserWindow, Menu, ipcMain, dialog, protocol, net } = require('el
 const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
+const { initUpdater } = require('./updater');
 
 const APP_HOST = 'aventurine';
 const APP_ORIGIN = `app://${APP_HOST}`;
@@ -439,6 +440,9 @@ app.whenReady().then(async () => {
         app.quit();
         return;
     }
+    // Before the window: the About tab asks for the update state as soon as
+    // the page runs, and an IPC handler registered after that call is too late.
+    initUpdater({ getWindow: () => mainWindow });
     await createWindow();
 
     // macOS: re-open the main window from the dock. No-op elsewhere.
