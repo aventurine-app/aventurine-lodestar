@@ -22,6 +22,15 @@
    themselves together next.
    ============================================================================ */
 
+/* ── Unselectable labels ────────────────────────────────────────────────────
+   A button's text is a label, not content. Without this, a double-click or a
+   drag that starts on a button highlights its text like a web page would.
+   Element selectors, so every button gets it whatever its class. */
+button,
+[role="button"] {
+    user-select: none;
+}
+
 /* ── Keyboard focus ring ────────────────────────────────────────────────────
    :focus-visible only triggers on keyboard focus, never on mouse click, so this
    is purely additive for pointer users. Was present only on budget-nav/copy;

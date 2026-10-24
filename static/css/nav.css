@@ -71,6 +71,9 @@ li {
     width: 100%;
     box-sizing: border-box;
     cursor: pointer;
+    /* The links act as buttons, so their labels don't highlight either
+       (buttons.css only reaches real <button>s). */
+    user-select: none;
 }
 
 .nav li button {
